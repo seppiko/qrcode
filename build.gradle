@@ -15,16 +15,6 @@ task all {
   dependsOn 'jar'
 }
 
-/*
-uploadArchives {
-  repositories {
-    flatDir {
-      dirs 'repos'
-    }
-  }
-}
-*/
-
 repositories {
   mavenCentral()
 }
