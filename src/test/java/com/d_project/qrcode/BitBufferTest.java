@@ -1,7 +1,8 @@
 package com.d_project.qrcode;
 
-import org.junit.Assert;
-import org.junit.Test;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Assertions;
 
 public class BitBufferTest {
 
@@ -11,7 +12,7 @@ public class BitBufferTest {
     QRData qd = new QR8BitByte("534TEST!!!あ");
     qd.write(bb);
 
-    Assert.assertEquals(96, bb.getLengthInBits() );
+    Assertions.assertEquals(96, bb.getLengthInBits() );
   }
 
   @Test
@@ -20,7 +21,7 @@ public class BitBufferTest {
     QRData qd = new QRAlphaNum("534TEST $%*+-./:");
     qd.write(bb);
 
-    Assert.assertEquals(88, bb.getLengthInBits() );
+    Assertions.assertEquals(88, bb.getLengthInBits() );
   }
 
   @Test
@@ -29,7 +30,7 @@ public class BitBufferTest {
     QRData qd = new QRKanji("あいうえお");
     qd.write(bb);
 
-    Assert.assertEquals(65, bb.getLengthInBits() );
+    Assertions.assertEquals(65, bb.getLengthInBits() );
   }
 
   @Test
@@ -38,6 +39,6 @@ public class BitBufferTest {
     QRData qd = new QRNumber("0123456789");
     qd.write(bb);
 
-    Assert.assertEquals(34, bb.getLengthInBits() );
+    Assertions.assertEquals(34, bb.getLengthInBits() );
   }
 }

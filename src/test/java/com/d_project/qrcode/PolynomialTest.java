@@ -1,7 +1,7 @@
 package com.d_project.qrcode;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Assertions;
 
 public class PolynomialTest {
 
@@ -31,16 +31,16 @@ public class PolynomialTest {
     }
 
     int[] log = {0,87,229,146,149,238,102,21};
-    Assert.assertEquals(log.length, a.getLength() );
+    Assertions.assertEquals(log.length, a.getLength() );
     for (int i = 0; i < a.getLength(); i++) {
-      Assert.assertEquals(log[i], QRMath.glog(a.get(i) ) );
+      Assertions.assertEquals(log[i], QRMath.glog(a.get(i) ) );
     }
   }
 
   protected void assertEquals(int[] num, Polynomial p) {
-    Assert.assertEquals(num.length, p.getLength() );
+    Assertions.assertEquals(num.length, p.getLength() );
     for (int i = 0; i < num.length; i++) {
-      Assert.assertEquals(num[i], p.get(i) );
+      Assertions.assertEquals(num[i], p.get(i) );
     }
   }
 }

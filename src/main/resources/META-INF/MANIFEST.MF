@@ -1,0 +1,5 @@
+Bundle-ManifestVersion: 2
+Bundle-SymbolicName: seppiko.qrcode
+Bundle-Category: osgi
+Bundle-Vendor: QRCODE.SEPPIKO.ORG
+Bundle-RequiredExecutionEnvironment: JavaSE-17

@@ -1,4 +1,4 @@
-package com.d_project.qrcode.web;
+package com.d_project.qrcode;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -10,7 +10,7 @@ import java.util.Map;
  * GIFイメージ(B/W)
  * @author Kazuhiko Arase 
  */
-class GIFImage {
+public class GIFImage {
 
     private int width;
     private int height;

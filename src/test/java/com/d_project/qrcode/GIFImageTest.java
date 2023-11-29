@@ -1,8 +1,9 @@
-package com.d_project.qrcode.web;
+package com.d_project.qrcode;
+
+import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
 
-import org.junit.Test;
 
 public class GIFImageTest {
 
