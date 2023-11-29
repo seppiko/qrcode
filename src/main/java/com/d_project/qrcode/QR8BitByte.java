@@ -4,7 +4,8 @@ import java.io.UnsupportedEncodingException;
 
 /**
  * QR8BitByte
- * @author Kazuhiko Arase 
+ *
+ * @author Kazuhiko Arase
  */
 class QR8BitByte extends QRData {
 
@@ -16,22 +17,22 @@ class QR8BitByte extends QRData {
 
     try {
 
-      byte[] data = getData().getBytes(QRCode.get8BitByteEncoding() );
+      byte[] data = getData().getBytes(QRCode.get8BitByteEncoding());
 
       for (int i = 0; i < data.length; i++) {
         buffer.put(data[i], 8);
       }
-      
-    } catch(UnsupportedEncodingException e) {
-      throw new RuntimeException(e.getMessage() );
-    }    
+
+    } catch (UnsupportedEncodingException e) {
+      throw new RuntimeException(e.getMessage());
+    }
   }
 
   public int getLength() {
     try {
-      return getData().getBytes(QRCode.get8BitByteEncoding() ).length;
-    } catch(UnsupportedEncodingException e) {
-      throw new RuntimeException(e.getMessage() );
+      return getData().getBytes(QRCode.get8BitByteEncoding()).length;
+    } catch (UnsupportedEncodingException e) {
+      throw new RuntimeException(e.getMessage());
     }
   }
 }

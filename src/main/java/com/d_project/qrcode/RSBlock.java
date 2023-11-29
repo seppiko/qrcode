@@ -5,12 +5,13 @@ import java.util.List;
 
 /**
  * RSBlock
+ *
  * @author Kazuhiko Arase
+ * ErrorCorrectionLevel
  */
 class RSBlock {
 
   private static final int[][] RS_BLOCK_TABLE = {
-
     // L
     // M
     // Q
@@ -257,20 +258,12 @@ class RSBlock {
     {20, 45, 15, 61, 46, 16}
   };
 
-  private int totalCount;
-  private int dataCount;
+  private final int totalCount;
+  private final int dataCount;
 
   private RSBlock(int totalCount, int dataCount) {
     this.totalCount = totalCount;
     this.dataCount  = dataCount;
-  }
-
-  public final int getDataCount() {
-    return dataCount;
-  }
-
-  public final int getTotalCount() {
-    return totalCount;
   }
 
   public static RSBlock[] getRSBlocks(int typeNumber, int errorCorrectionLevel) {
@@ -279,10 +272,8 @@ class RSBlock {
     int length = rsBlock.length / 3;
 
 
-    List<RSBlock> list = new ArrayList<RSBlock>();
-
+    List<RSBlock> list = new ArrayList<>();
     for (int i = 0; i < length; i++) {
-
       int count = rsBlock[i * 3 + 0];
       int totalCount = rsBlock[i * 3 + 1];
       int dataCount  = rsBlock[i * 3 + 2];
@@ -292,29 +283,28 @@ class RSBlock {
       }
     }
 
-    return list.toArray(new RSBlock[list.size() ]);
+    return list.toArray(RSBlock[]::new);
   }
 
   private static int[] getRsBlockTable(int typeNumber, int errorCorrectionLevel) {
-
     try {
-
-      switch(errorCorrectionLevel) {
-      case ErrorCorrectionLevel.L :
-        return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 0];
-      case ErrorCorrectionLevel.M :
-        return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 1];
-      case ErrorCorrectionLevel.Q :
-        return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 2];
-      case ErrorCorrectionLevel.H :
-        return RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 3];
-      default :
-        break;
-      }
-
-    } catch(Exception e) {
+      return switch (errorCorrectionLevel) {
+        case ErrorCorrectionLevel.L -> RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 0];
+        case ErrorCorrectionLevel.M -> RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 1];
+        case ErrorCorrectionLevel.Q -> RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 2];
+        case ErrorCorrectionLevel.H -> RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 3];
+        default -> throw new Exception();
+      };
+    } catch(Exception ignored) {
     }
+    throw new IllegalArgumentException("tn: " + typeNumber + " /ecl: " + errorCorrectionLevel);
+  }
 
-    throw new IllegalArgumentException("tn:" + typeNumber + "/ecl:" + errorCorrectionLevel);
+  public final int getDataCount() {
+    return dataCount;
+  }
+
+  public final int getTotalCount() {
+    return totalCount;
   }
 }

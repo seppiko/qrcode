@@ -4,6 +4,8 @@
 
 1. Delete web
 2. Change `build.gradle` to `pom.xml`
+3. Reformat and Optimize code
+4. Add module
 
 ## 0.1.0 - 2023-11-28
 

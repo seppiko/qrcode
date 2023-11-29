@@ -1,11 +1,15 @@
 # QRCode for Java
 
-Copyright (c) 2009 Kazuhiko Arase
+## Copyright
 
-URL: http://www.d-project.com/
+Copyright (c) 2009 [Kazuhiko Arase](https://kazuhikoarase.github.io/)
 
-Licensed under the MIT license:
->  http://www.opensource.org/licenses/mit-license.php
+Copyright (c) 2023 Leonard Woo
 
-The word "QR Code" is registered trademark of DENSO WAVE INCORPORATED
-> http://www.denso-wave.com/qrcode/faqpatent-e.html
+Licensed under the [MIT license](http://www.opensource.org/licenses/mit)
+
+The word "QR Code" is registered trademark of [DENSO WAVE INCORPORATED](http://www.denso-wave.com/qrcode/faqpatent-e.html)
+
+## Sponsors
+
+<a href="https://www.jetbrains.com/" target="_blank"><img src="https://seppiko.org/images/jetbrains.png" alt="JetBrians" width="100px"></a>

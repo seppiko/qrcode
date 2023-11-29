@@ -4,20 +4,11 @@ import java.io.UnsupportedEncodingException;
 
 /**
  * QRUtil
+ *
  * @author Kazuhiko Arase
+ * @author Leonard Woo
  */
 class QRUtil {
-
-  private QRUtil() {
-  }
-
-  public static String getJISEncoding() {
-        return "SJIS";
-  }
-
-  public static int[] getPatternPosition(int typeNumber) {
-    return PATTERN_POSITION_TABLE[typeNumber - 1];
-  }
 
   private static final int[][] PATTERN_POSITION_TABLE ={
     {},
@@ -61,8 +52,13 @@ class QRUtil {
     {6, 26, 54, 82, 110, 138, 166},
     {6, 30, 58, 86, 114, 142, 170}
   };
-
-    private static int[][][] MAX_LENGTH = {
+  private static final int G15 =
+      (1 << 10) | (1 << 8) | (1 << 5) | (1 << 4) | (1 << 2) | (1 << 1) | (1 << 0);
+  private static final int G18 =
+      (1 << 12) | (1 << 11) | (1 << 10) | (1 << 9) | (1 << 8) | (1 << 5) | (1 << 2) | (1 << 0);
+  private static final int G15_MASK =
+      (1 << 14) | (1 << 12) | (1 << 10) | (1 << 4) | (1 << 1);
+    private static final int[][][] MAX_LENGTH = {
         { {41,  25,  17,  10},  {34,  20,  14,  8},   {27,  16,  11,  7},  {17,  10,  7,   4} },
         { {77,  47,  32,  20},  {63,  38,  26,  16},  {48,  29,  20,  12}, {34,  20,  14,  8} },
         { {127, 77,  53,  32},  {101, 61,  42,  26},  {77,  47,  32,  20}, {58,  35,  24,  15} },
@@ -75,33 +71,41 @@ class QRUtil {
         { {652, 395, 271, 167}, {513, 311, 213, 131}, {364, 221, 151, 93}, {288, 174, 119, 74} }
     };
 
-    public static int getMaxLength(int typeNumber, int mode, int errorCorrectionLevel) {
+  private QRUtil() {
+  }
 
-        int t = typeNumber - 1;
-        int e = 0;
-        int m = 0;
+  public static String getJISEncoding() {
+    return "SJIS";
+  }
 
-        switch(errorCorrectionLevel) {
-        case ErrorCorrectionLevel.L : e = 0; break;
-        case ErrorCorrectionLevel.M : e = 1; break;
-        case ErrorCorrectionLevel.Q : e = 2; break;
-        case ErrorCorrectionLevel.H : e = 3; break;
-        default :
-            throw new IllegalArgumentException("e:" + errorCorrectionLevel);
-        }
+  public static int[] getPatternPosition(int typeNumber) {
+    return PATTERN_POSITION_TABLE[typeNumber - 1];
+  }
 
-        switch(mode) {
-        case Mode.MODE_NUMBER    : m = 0; break;
-        case Mode.MODE_ALPHA_NUM : m = 1; break;
-        case Mode.MODE_8BIT_BYTE : m = 2; break;
-        case Mode.MODE_KANJI     : m = 3; break;
-        default :
-            throw new IllegalArgumentException("m:" + mode);
-        }
+  public static int getMaxLength(int typeNumber, int mode, int errorCorrectionLevel) {
 
-        return MAX_LENGTH[t][e][m];
-    }
+    int t = typeNumber - 1;
+    int e = 0;
+    int m = 0;
 
+    e = switch (errorCorrectionLevel) {
+      case ErrorCorrectionLevel.L -> 0;
+      case ErrorCorrectionLevel.M -> 1;
+      case ErrorCorrectionLevel.Q -> 2;
+      case ErrorCorrectionLevel.H -> 3;
+      default -> throw new IllegalArgumentException("ecl: " + errorCorrectionLevel);
+    };
+
+    m = switch (mode) {
+      case Mode.MODE_NUMBER -> 0;
+      case Mode.MODE_ALPHA_NUM -> 1;
+      case Mode.MODE_8BIT_BYTE -> 2;
+      case Mode.MODE_KANJI -> 3;
+      default -> throw new IllegalArgumentException("m: " + mode);
+    };
+
+    return MAX_LENGTH[t][e][m];
+  }
 
   /**
    * エラー訂正多項式を取得する。
@@ -121,21 +125,17 @@ class QRUtil {
    * 指定されたパターンのマスクを取得する。
    */
   public static boolean getMask(int maskPattern, int i, int j) {
-
-    switch (maskPattern) {
-
-    case MaskPattern.PATTERN000 : return (i + j) % 2 == 0;
-    case MaskPattern.PATTERN001 : return i % 2 == 0;
-    case MaskPattern.PATTERN010 : return j % 3 == 0;
-    case MaskPattern.PATTERN011 : return (i + j) % 3 == 0;
-    case MaskPattern.PATTERN100 : return (i / 2 + j / 3) % 2 == 0;
-    case MaskPattern.PATTERN101 : return (i * j) % 2 + (i * j) % 3 == 0;
-    case MaskPattern.PATTERN110 : return ( (i * j) % 2 + (i * j) % 3) % 2 == 0;
-    case MaskPattern.PATTERN111 : return ( (i * j) % 3 + (i + j) % 2) % 2 == 0;
-
-    default :
-      throw new IllegalArgumentException("mask:" + maskPattern);
-    }
+    return switch (maskPattern) {
+      case MaskPattern.PATTERN000 -> (i + j) % 2 == 0;
+      case MaskPattern.PATTERN001 -> i % 2 == 0;
+      case MaskPattern.PATTERN010 -> j % 3 == 0;
+      case MaskPattern.PATTERN011 -> (i + j) % 3 == 0;
+      case MaskPattern.PATTERN100 -> (i / 2 + j / 3) % 2 == 0;
+      case MaskPattern.PATTERN101 -> (i * j) % 2 + (i * j) % 3 == 0;
+      case MaskPattern.PATTERN110 -> ((i * j) % 2 + (i * j) % 3) % 2 == 0;
+      case MaskPattern.PATTERN111 -> ((i * j) % 3 + (i + j) % 2) % 2 == 0;
+      default -> throw new IllegalArgumentException("mask:" + maskPattern);
+    };
   }
 
   /**
@@ -149,30 +149,23 @@ class QRUtil {
 
 
     // LEVEL1
-
     for (int row = 0; row < moduleCount; row++) {
-
       for (int col = 0; col < moduleCount; col++) {
-
         int sameCount = 0;
         boolean dark = qrCode.isDark(row, col);
 
         for (int r = -1; r <= 1; r++) {
-
           if (row + r < 0 || moduleCount <= row + r) {
             continue;
           }
 
           for (int c = -1; c <= 1; c++) {
-
             if (col + c < 0 || moduleCount <= col + c) {
               continue;
             }
-
             if (r == 0 && c == 0) {
               continue;
             }
-
             if (dark == qrCode.isDark(row + r, col + c) ) {
               sameCount++;
             }
@@ -186,7 +179,6 @@ class QRUtil {
     }
 
     // LEVEL2
-
     for (int row = 0; row < moduleCount - 1; row++) {
       for (int col = 0; col < moduleCount - 1; col++) {
         int count = 0;
@@ -201,7 +193,6 @@ class QRUtil {
     }
 
     // LEVEL3
-
     for (int row = 0; row < moduleCount; row++) {
       for (int col = 0; col < moduleCount - 6; col++) {
         if (qrCode.isDark(row, col)
@@ -231,9 +222,7 @@ class QRUtil {
     }
 
     // LEVEL4
-
     int darkCount = 0;
-
     for (int col = 0; col < moduleCount; col++) {
       for (int row = 0; row < moduleCount; row++) {
         if (qrCode.isDark(row, col) ) {
@@ -282,43 +271,22 @@ class QRUtil {
   }
 
   private static boolean isKanji(String s) {
-
     try {
-
       byte[] data = s.getBytes(QRUtil.getJISEncoding() );
-
       int i = 0;
-
       while (i + 1 < data.length) {
-
         int c = ( (0xff & data[i]) << 8) | (0xff & data[i + 1]);
-
         if (!(0x8140 <= c && c <= 0x9FFC) && !(0xE040 <= c && c <= 0xEBBF) ) {
           return false;
         }
-
         i += 2;
       }
 
-      if (i < data.length) {
-        return false;
-      }
-
-      return true;
-
+      return i >= data.length;
     } catch(UnsupportedEncodingException e) {
       throw new RuntimeException(e.getMessage() );
     }
   }
-
-  private static final int G15 = (1 << 10) | (1 << 8) | (1 << 5)
-    | (1 << 4) | (1 << 2) | (1 << 1) | (1 << 0);
-
-  private static final int G18 = (1 << 12) | (1 << 11) | (1 << 10)
-    | (1 << 9) | (1 << 8) | (1 << 5) | (1 << 2) | (1 << 0);
-
-  private static final int G15_MASK = (1 << 14) | (1 << 12) | (1 << 10)
-    | (1 << 4) | (1 << 1);
 
   public static int getBCHTypeInfo(int data) {
     int d = data << 10;
@@ -337,15 +305,11 @@ class QRUtil {
   }
 
   private static int getBCHDigit(int data) {
-
     int digit = 0;
-
     while (data != 0) {
       digit++;
       data >>>= 1;
     }
-
     return digit;
-
   }
 }

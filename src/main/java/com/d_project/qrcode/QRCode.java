@@ -19,15 +19,11 @@ public class QRCode {
   private static final int PAD0 = 0xEC;
 
   private static final int PAD1 = 0x11;
-
+  private static String _8BitByteEncoding = QRUtil.getJISEncoding();
   private int typeNumber;
-
   private Boolean[][] modules;
-
   private int moduleCount;
-
   private int errorCorrectionLevel;
-
   private List<QRData> qrDataList;
 
   /**
@@ -39,6 +35,159 @@ public class QRCode {
     this.typeNumber = 1;
     this.errorCorrectionLevel = ErrorCorrectionLevel.H;
     this.qrDataList = new ArrayList<QRData>(1);
+  }
+
+  public static byte[] createData(int typeNumber, int errorCorrectionLevel, QRData[] dataArray) {
+
+    RSBlock[] rsBlocks = RSBlock.getRSBlocks(typeNumber, errorCorrectionLevel);
+
+    BitBuffer buffer = new BitBuffer();
+
+    for (int i = 0; i < dataArray.length; i++) {
+      QRData data = dataArray[i];
+      buffer.put(data.getMode(), 4);
+      buffer.put(data.getLength(), data.getLengthInBits(typeNumber) );
+      data.write(buffer);
+    }
+
+    // 最大データ数を計算
+    int totalDataCount = 0;
+    for (int i = 0; i < rsBlocks.length; i++) {
+      totalDataCount += rsBlocks[i].getDataCount();
+    }
+
+    if (buffer.getLengthInBits() > totalDataCount * 8) {
+      throw new IllegalArgumentException("code length overflow. ("
+        + buffer.getLengthInBits()
+        + ">"
+        +  totalDataCount * 8
+        + ")");
+    }
+
+    // 終端コード
+    if (buffer.getLengthInBits() + 4 <= totalDataCount * 8) {
+      buffer.put(0, 4);
+    }
+
+    // padding
+    while (buffer.getLengthInBits() % 8 != 0) {
+      buffer.put(false);
+    }
+
+    // padding
+    while (true) {
+
+      if (buffer.getLengthInBits() >= totalDataCount * 8) {
+        break;
+      }
+      buffer.put(PAD0, 8);
+
+      if (buffer.getLengthInBits() >= totalDataCount * 8) {
+        break;
+      }
+      buffer.put(PAD1, 8);
+    }
+
+    return createBytes(buffer, rsBlocks);
+  }
+
+  private static byte[] createBytes(BitBuffer buffer, RSBlock[] rsBlocks) {
+
+    int offset = 0;
+
+    int maxDcCount = 0;
+    int maxEcCount = 0;
+
+    int[][] dcdata = new int[rsBlocks.length][];
+    int[][] ecdata = new int[rsBlocks.length][];
+
+    for (int r = 0; r < rsBlocks.length; r++) {
+
+      int dcCount = rsBlocks[r].getDataCount();
+      int ecCount = rsBlocks[r].getTotalCount() - dcCount;
+
+      maxDcCount = Math.max(maxDcCount, dcCount);
+      maxEcCount = Math.max(maxEcCount, ecCount);
+
+      dcdata[r] = new int[dcCount];
+      for (int i = 0; i < dcdata[r].length; i++) {
+        dcdata[r][i] = 0xff & buffer.getBuffer()[i + offset];
+      }
+      offset += dcCount;
+
+        Polynomial rsPoly = QRUtil.getErrorCorrectPolynomial(ecCount);
+      Polynomial rawPoly = new Polynomial(dcdata[r], rsPoly.getLength() - 1);
+
+      Polynomial modPoly = rawPoly.mod(rsPoly);
+      ecdata[r] = new int[rsPoly.getLength() - 1];
+      for (int i = 0; i < ecdata[r].length; i++) {
+        int modIndex = i + modPoly.getLength() - ecdata[r].length;
+        ecdata[r][i] = (modIndex >= 0)? modPoly.get(modIndex) : 0;
+      }
+
+    }
+
+    int totalCodeCount = 0;
+    for (int i = 0; i < rsBlocks.length; i++) {
+      totalCodeCount += rsBlocks[i].getTotalCount();
+    }
+
+    byte[] data = new byte[totalCodeCount];
+
+    int index = 0;
+
+    for (int i = 0; i < maxDcCount; i++) {
+      for (int r = 0; r < rsBlocks.length; r++) {
+        if (i < dcdata[r].length) {
+          data[index++] = (byte)dcdata[r][i];
+        }
+      }
+    }
+
+    for (int i = 0; i < maxEcCount; i++) {
+      for (int r = 0; r < rsBlocks.length; r++) {
+        if (i < ecdata[r].length) {
+          data[index++] = (byte)ecdata[r][i];
+        }
+      }
+    }
+
+    return data;
+  }
+
+  /**
+   * 最小の型番となる QRCode を作成する。
+   * @param data データ
+   * @param errorCorrectionLevel 誤り訂正レベル
+   */
+  public static QRCode getMinimumQRCode(String data, int errorCorrectionLevel) {
+
+    int mode = QRUtil.getMode(data);
+
+    QRCode qr = new QRCode();
+    qr.setErrorCorrectionLevel(errorCorrectionLevel);
+    qr.addData(data, mode);
+
+    int length = qr.getData(0).getLength();
+
+    for (int typeNumber = 1; typeNumber <= 10; typeNumber++) {
+      if (length <= QRUtil.getMaxLength(typeNumber, mode, errorCorrectionLevel) ) {
+        qr.setTypeNumber(typeNumber);
+        break;
+      }
+    }
+
+    qr.make();
+
+    return qr;
+  }
+
+  public static String get8BitByteEncoding() {
+    return _8BitByteEncoding;
+  }
+
+  public static void set8BitByteEncoding(final String _8BitByteEncoding) {
+    QRCode._8BitByteEncoding = _8BitByteEncoding;
   }
 
   /**
@@ -397,151 +546,6 @@ public void addData(String data) {
     modules[moduleCount - 8][8] = Boolean.valueOf(!test);
   }
 
-  public static byte[] createData(int typeNumber, int errorCorrectionLevel, QRData[] dataArray) {
-
-    RSBlock[] rsBlocks = RSBlock.getRSBlocks(typeNumber, errorCorrectionLevel);
-
-    BitBuffer buffer = new BitBuffer();
-
-    for (int i = 0; i < dataArray.length; i++) {
-      QRData data = dataArray[i];
-      buffer.put(data.getMode(), 4);
-      buffer.put(data.getLength(), data.getLengthInBits(typeNumber) );
-      data.write(buffer);
-    }
-
-    // 最大データ数を計算
-    int totalDataCount = 0;
-    for (int i = 0; i < rsBlocks.length; i++) {
-      totalDataCount += rsBlocks[i].getDataCount();
-    }
-
-    if (buffer.getLengthInBits() > totalDataCount * 8) {
-      throw new IllegalArgumentException("code length overflow. ("
-        + buffer.getLengthInBits()
-        + ">"
-        +  totalDataCount * 8
-        + ")");
-    }
-
-    // 終端コード
-    if (buffer.getLengthInBits() + 4 <= totalDataCount * 8) {
-      buffer.put(0, 4);
-    }
-
-    // padding
-    while (buffer.getLengthInBits() % 8 != 0) {
-      buffer.put(false);
-    }
-
-    // padding
-    while (true) {
-
-      if (buffer.getLengthInBits() >= totalDataCount * 8) {
-        break;
-      }
-      buffer.put(PAD0, 8);
-
-      if (buffer.getLengthInBits() >= totalDataCount * 8) {
-        break;
-      }
-      buffer.put(PAD1, 8);
-    }
-
-    return createBytes(buffer, rsBlocks);
-  }
-
-  private static byte[] createBytes(BitBuffer buffer, RSBlock[] rsBlocks) {
-
-    int offset = 0;
-
-    int maxDcCount = 0;
-    int maxEcCount = 0;
-
-    int[][] dcdata = new int[rsBlocks.length][];
-    int[][] ecdata = new int[rsBlocks.length][];
-
-    for (int r = 0; r < rsBlocks.length; r++) {
-
-      int dcCount = rsBlocks[r].getDataCount();
-      int ecCount = rsBlocks[r].getTotalCount() - dcCount;
-
-      maxDcCount = Math.max(maxDcCount, dcCount);
-      maxEcCount = Math.max(maxEcCount, ecCount);
-
-      dcdata[r] = new int[dcCount];
-      for (int i = 0; i < dcdata[r].length; i++) {
-        dcdata[r][i] = 0xff & buffer.getBuffer()[i + offset];
-      }
-      offset += dcCount;
-
-        Polynomial rsPoly = QRUtil.getErrorCorrectPolynomial(ecCount);
-      Polynomial rawPoly = new Polynomial(dcdata[r], rsPoly.getLength() - 1);
-
-      Polynomial modPoly = rawPoly.mod(rsPoly);
-      ecdata[r] = new int[rsPoly.getLength() - 1];
-      for (int i = 0; i < ecdata[r].length; i++) {
-        int modIndex = i + modPoly.getLength() - ecdata[r].length;
-        ecdata[r][i] = (modIndex >= 0)? modPoly.get(modIndex) : 0;
-      }
-
-    }
-
-    int totalCodeCount = 0;
-    for (int i = 0; i < rsBlocks.length; i++) {
-      totalCodeCount += rsBlocks[i].getTotalCount();
-    }
-
-    byte[] data = new byte[totalCodeCount];
-
-    int index = 0;
-
-    for (int i = 0; i < maxDcCount; i++) {
-      for (int r = 0; r < rsBlocks.length; r++) {
-        if (i < dcdata[r].length) {
-          data[index++] = (byte)dcdata[r][i];
-        }
-      }
-    }
-
-    for (int i = 0; i < maxEcCount; i++) {
-      for (int r = 0; r < rsBlocks.length; r++) {
-        if (i < ecdata[r].length) {
-          data[index++] = (byte)ecdata[r][i];
-        }
-      }
-    }
-
-    return data;
-  }
-
-  /**
-   * 最小の型番となる QRCode を作成する。
-   * @param data データ
-   * @param errorCorrectionLevel 誤り訂正レベル
-   */
-  public static QRCode getMinimumQRCode(String data, int errorCorrectionLevel) {
-
-    int mode = QRUtil.getMode(data);
-
-    QRCode qr = new QRCode();
-    qr.setErrorCorrectionLevel(errorCorrectionLevel);
-    qr.addData(data, mode);
-
-    int length = qr.getData(0).getLength();
-
-    for (int typeNumber = 1; typeNumber <= 10; typeNumber++) {
-      if (length <= QRUtil.getMaxLength(typeNumber, mode, errorCorrectionLevel) ) {
-        qr.setTypeNumber(typeNumber);
-        break;
-      }
-    }
-
-    qr.make();
-
-    return qr;
-  }
-
   /**
    * イメージを取得する。
    * @param cellSize セルのサイズ(pixel)
@@ -576,13 +580,5 @@ public void addData(String data) {
     }
 
     return image;
-  }
-
-  private static String _8BitByteEncoding = QRUtil.getJISEncoding();
-  public static void set8BitByteEncoding(final String _8BitByteEncoding) {
-    QRCode._8BitByteEncoding = _8BitByteEncoding;
-  }
-  public static String get8BitByteEncoding() {
-    return _8BitByteEncoding;
   }
 }

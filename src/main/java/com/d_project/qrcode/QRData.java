@@ -2,7 +2,9 @@ package com.d_project.qrcode;
 
 /**
  * QRData
- * @author Kazuhiko Arase 
+ *
+ * @author Kazuhiko Arase
+ * @author Leonard Woo
  */
 abstract class QRData {
 
@@ -29,47 +31,39 @@ abstract class QRData {
 
   /**
    * 型番及びモードに対するビット長を取得する。
-   */  
+   *
+   * @param type
+   * @throws IllegalArgumentException
+   */
   public int getLengthInBits(int type) {
-
     if (1 <= type && type < 10) {
-
       // 1 - 9
-
-      switch(mode) {
-      case Mode.MODE_NUMBER     : return 10;
-      case Mode.MODE_ALPHA_NUM   : return 9;
-      case Mode.MODE_8BIT_BYTE  : return 8;
-      case Mode.MODE_KANJI      : return 8;
-      default :
-        throw new IllegalArgumentException("mode:" + mode);
-      }
+      return switch (mode) {
+        case Mode.MODE_NUMBER -> 10;
+        case Mode.MODE_ALPHA_NUM -> 9;
+        case Mode.MODE_8BIT_BYTE, Mode.MODE_KANJI -> 8;
+        default -> throw new IllegalArgumentException("mode:" + mode);
+      };
 
     } else if (type < 27) {
-
       // 10 - 26
-
-      switch(mode) {
-      case Mode.MODE_NUMBER     : return 12;
-      case Mode.MODE_ALPHA_NUM   : return 11;
-      case Mode.MODE_8BIT_BYTE  : return 16;
-      case Mode.MODE_KANJI      : return 10;
-      default :
-        throw new IllegalArgumentException("mode:" + mode);
-      }
+      return switch (mode) {
+        case Mode.MODE_NUMBER -> 12;
+        case Mode.MODE_ALPHA_NUM -> 11;
+        case Mode.MODE_8BIT_BYTE -> 16;
+        case Mode.MODE_KANJI -> 10;
+        default -> throw new IllegalArgumentException("mode:" + mode);
+      };
 
     } else if (type < 41) {
-
       // 27 - 40
-
-      switch(mode) {
-      case Mode.MODE_NUMBER     : return 14;
-      case Mode.MODE_ALPHA_NUM  : return 13;
-      case Mode.MODE_8BIT_BYTE  : return 16;
-      case Mode.MODE_KANJI      : return 12;
-      default :
-        throw new IllegalArgumentException("mode:" + mode);
-      }
+      return switch (mode) {
+        case Mode.MODE_NUMBER -> 14;
+        case Mode.MODE_ALPHA_NUM -> 13;
+        case Mode.MODE_8BIT_BYTE -> 16;
+        case Mode.MODE_KANJI -> 12;
+        default -> throw new IllegalArgumentException("mode:" + mode);
+      };
 
     } else {
       throw new IllegalArgumentException("type:" + type);

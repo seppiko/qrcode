@@ -8,6 +8,7 @@ import java.util.Map;
 
 /**
  * GIFイメージ(B/W)
+ *
  * @author Kazuhiko Arase 
  */
 public class GIFImage {
@@ -22,6 +23,11 @@ public class GIFImage {
         this.data = new int[width * height];
     }
     
+    private static void write(OutputStream out, int i) throws IOException {
+        out.write(i & 0xff);
+        out.write( (i >>> 8) & 0xff);
+    }
+
     public void setPixel(int x, int y, int pixel) {
         if (x < 0 || width  <= x) throw new IllegalArgumentException();
         if (y < 0 || height <= y) throw new IllegalArgumentException();
@@ -50,7 +56,7 @@ public class GIFImage {
         out.write(0x80); // 2bit
         out.write(0);
         out.write(0);
-                
+
         //---------------------------------
         // Global Color Map
 
@@ -89,14 +95,14 @@ public class GIFImage {
 
         while (raster.length - offset > 255) {
             out.write(255);
-            out.write(raster, offset, 255); 
+            out.write(raster, offset, 255);
             offset += 255;
         }
 
         out.write(raster.length - offset);
-        out.write(raster, offset, raster.length - offset); 
+        out.write(raster, offset, raster.length - offset);
         out.write(0x00);
-        
+
         //---------------------------------
         // GIF Terminator
         out.write(';');
@@ -118,20 +124,20 @@ public class GIFImage {
         table.add(String.valueOf( (char)clearCode) );
         table.add(String.valueOf( (char)endCode) );
 
-        
+
         ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
         BitOutputStream bitOut = new BitOutputStream(byteOut);
-        
+
         try {
 
-            // clear code        
+            // clear code
             bitOut.write(clearCode, bitLength);
 
             int dataIndex = 0;
             String s = String.valueOf( (char)data[dataIndex++]);
-            
+
             while (dataIndex < data.length) {
-        
+
                 char c = (char)data[dataIndex++];
 
                 if (table.contains(s + c) ) {
@@ -154,22 +160,17 @@ public class GIFImage {
                     s = String.valueOf(c);
                 }
             }
-            
+
             bitOut.write(table.indexOf(s), bitLength);
-        
-            // end code        
+
+            // end code
             bitOut.write(endCode, bitLength);
-        
+
         } finally {
             bitOut.close();
         }
-        
-        return byteOut.toByteArray();
-    }
 
-    private static void write(OutputStream out, int i) throws IOException {
-        out.write(i & 0xff);
-        out.write( (i >>> 8) & 0xff);
+        return byteOut.toByteArray();
     }
     
     private static class LZWTable {
