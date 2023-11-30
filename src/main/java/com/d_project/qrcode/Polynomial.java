@@ -14,7 +14,6 @@ class Polynomial {
   }
 
   public Polynomial(int[] num, int shift) {
-
     int offset = 0;
 
     while (offset < num.length && num[offset] == 0) {
@@ -33,8 +32,8 @@ class Polynomial {
     return num.length;
   }
 
+  @Override
   public String toString() {
-
     StringBuilder buffer = new StringBuilder();
 
     for (int i = 0; i < getLength(); i++) {
@@ -48,7 +47,6 @@ class Polynomial {
   }
 
   public String toLogString() {
-
     StringBuilder buffer = new StringBuilder();
 
     for (int i = 0; i < getLength(); i++) {
@@ -62,7 +60,6 @@ class Polynomial {
   }
 
   public Polynomial multiply(Polynomial e) {
-
     int[] num = new int[getLength() + e.getLength() - 1];
 
     for (int i = 0; i < getLength(); i++) {
@@ -75,7 +72,6 @@ class Polynomial {
   }
 
   public Polynomial mod(Polynomial e) {
-
     if (getLength() - e.getLength() < 0) {
       return this;
     }

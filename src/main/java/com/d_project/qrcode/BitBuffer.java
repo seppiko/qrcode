@@ -9,7 +9,7 @@ class BitBuffer {
 
   private byte[] buffer;
   private int length;
-  private int inclements;
+  private final int inclements;
 
   public BitBuffer() {
     inclements = 32;
@@ -25,6 +25,7 @@ class BitBuffer {
     return length;
   }
 
+  @Override
   public String toString() {
     StringBuilder buffer = new StringBuilder();
     for (int i = 0; i < getLengthInBits(); i++) {

@@ -4,6 +4,7 @@ package com.d_project.qrcode;
  * 誤り訂正レベル.
  *
  * @author Kazuhiko Arase
+ * @author Leonard Woo
  */
 public interface ErrorCorrectionLevel {
 
@@ -18,4 +19,20 @@ public interface ErrorCorrectionLevel {
 
   /** 復元能力 30%. */
   int H = 2;
+
+  /**
+   * Parser Error Correction Level.
+   *
+   * @param ecl Error Correction Level String.
+   * @return Error Correction Level Number.
+   */
+  static int parser(String ecl) {
+    return switch (ecl) {
+      case "l", "L" -> L;
+      case "m", "M" -> M;
+      case "q", "Q" -> Q;
+      case "h", "H" -> H;
+      default -> throw new IllegalArgumentException("Invalid error correct level: " + ecl);
+    };
+  }
 }

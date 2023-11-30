@@ -83,12 +83,9 @@ class QRUtil {
   }
 
   public static int getMaxLength(int typeNumber, int mode, int errorCorrectionLevel) {
-
     int t = typeNumber - 1;
-    int e = 0;
-    int m = 0;
 
-    e = switch (errorCorrectionLevel) {
+    int e = switch (errorCorrectionLevel) {
       case ErrorCorrectionLevel.L -> 0;
       case ErrorCorrectionLevel.M -> 1;
       case ErrorCorrectionLevel.Q -> 2;
@@ -96,7 +93,7 @@ class QRUtil {
       default -> throw new IllegalArgumentException("ecl: " + errorCorrectionLevel);
     };
 
-    m = switch (mode) {
+    int m = switch (mode) {
       case Mode.MODE_NUMBER -> 0;
       case Mode.MODE_ALPHA_NUM -> 1;
       case Mode.MODE_8BIT_BYTE -> 2;
@@ -111,7 +108,6 @@ class QRUtil {
    * エラー訂正多項式を取得する。
    */
   public static Polynomial getErrorCorrectPolynomial(int errorCorrectLength) {
-
     Polynomial a = new Polynomial(new int[]{1});
 
     for (int i = 0; i < errorCorrectLength; i++) {
@@ -142,11 +138,8 @@ class QRUtil {
    * 失点を取得する
    */
   public static int getLostPoint(QRCode qrCode) {
-
     int moduleCount = qrCode.getModuleCount();
-
     int lostPoint = 0;
-
 
     // LEVEL1
     for (int row = 0; row < moduleCount; row++) {
@@ -263,7 +256,7 @@ class QRUtil {
   private static boolean isAlphaNum(String s) {
     for (int i = 0; i < s.length(); i++) {
       char c = s.charAt(i);
-      if (!('0' <= c && c <= '9') && !('A' <= c && c <= 'Z') && " $%*+-./:".indexOf(c) == -1) {
+      if (!('0' <= c && c <= '9') && !('A' <= c && c <= 'Z') && (" $%*+-./:".indexOf(c) == -1)) {
         return false;
       }
     }

@@ -34,9 +34,7 @@ class QRAlphaNum extends QRData {
   }
 
   public void write(BitBuffer buffer) {
-
     char[] c = getData().toCharArray();
-
     int i = 0;
 
     while (i + 1 < c.length) {
