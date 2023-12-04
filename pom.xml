@@ -6,7 +6,7 @@
 
   <groupId>org.seppiko</groupId>
   <artifactId>qrcode</artifactId>
-  <version>0.2.0</version>
+  <version>0.3.0</version>
 
   <name>QRCode for Java</name>
   <description>QRCode Generator</description>

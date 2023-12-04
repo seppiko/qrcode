@@ -25,7 +25,9 @@ package com.d_project.qrcode;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * QRコード.
@@ -261,7 +263,7 @@ public class QRCode {
    * @param data データ
    */
   public void addData(String data) {
-    addData(data, QRUtil.getMode(data) );
+    addData(data, QRUtil.getMode(data));
   }
 
   /**
@@ -281,7 +283,7 @@ public class QRCode {
     } else if (Mode.MODE_KANJI == mode) {
       addData(new QRKanji(data));
     } else {
-      throw new IllegalArgumentException("mode:" + mode);
+      throw new IllegalArgumentException("mode: " + mode);
     }
   }
 
@@ -298,7 +300,7 @@ public class QRCode {
    *
    * @param qrData QRData instance.
    */
-  protected void addData(QRData qrData) {
+  private void addData(QRData qrData) {
     qrDataList.add(qrData);
   }
 
@@ -307,7 +309,7 @@ public class QRCode {
    *
    * @return QRData list count.
    */
-  protected int getDataCount() {
+  private int getDataCount() {
     return qrDataList.size();
   }
 
@@ -317,7 +319,7 @@ public class QRCode {
    * @param index QRData list index.
    * @return QRData instance.
    */
-  protected QRData getData(int index) {
+  private QRData getData(int index) {
     return qrDataList.get(index);
   }
 
@@ -329,11 +331,7 @@ public class QRCode {
    * @return true if this pixel is dark.
    */
   public boolean isDark(int row, int col) {
-    if (modules[row][col] != null) {
-      return modules[row][col].booleanValue();
-    } else {
-      return false;
-    }
+    return modules[row][col] != null? modules[row][col]: false;
   }
 
   /**
@@ -421,7 +419,7 @@ public class QRCode {
               dark = !dark;
             }
 
-            modules[row][col - c] = Boolean.valueOf(dark);
+            modules[row][col - c] = dark;
             bitIndex--;
 
             if (bitIndex == -1) {
@@ -456,9 +454,9 @@ public class QRCode {
         for (int r = -2; r <= 2; r++) {
           for (int c = -2; c <= 2; c++) {
             if (r == -2 || r == 2 || c == -2 || c == 2 || (r == 0 && c == 0)) {
-              modules[row + r][col + c] = Boolean.valueOf(true);
+              modules[row + r][col + c] = Boolean.TRUE;
             } else {
-              modules[row + r][col + c] = Boolean.valueOf(false);
+              modules[row + r][col + c] = Boolean.FALSE;
             }
           }
         }
@@ -480,9 +478,9 @@ public class QRCode {
         if ( (0 <= r && r <= 6 && (c == 0 || c == 6) )
             || (0 <= c && c <= 6 && (r == 0 || r == 6) )
             || (2 <= r && r <= 4 && 2 <= c && c <= 4) ) {
-          modules[row + r][col + c] = Boolean.valueOf(true);
+          modules[row + r][col + c] = Boolean.TRUE;
         } else {
-          modules[row + r][col + c] = Boolean.valueOf(false);
+          modules[row + r][col + c] = Boolean.FALSE;
         }
       }
     }
@@ -496,13 +494,13 @@ public class QRCode {
       if (modules[r][6] != null) {
         continue;
       }
-      modules[r][6] = Boolean.valueOf(r % 2 == 0);
+      modules[r][6] = (r % 2 == 0);
     }
     for (int c = 8; c < moduleCount - 8; c++) {
       if (modules[6][c] != null) {
         continue;
       }
-      modules[6][c] = Boolean.valueOf(c % 2 == 0);
+      modules[6][c] = (c % 2 == 0);
     }
   }
 
@@ -510,17 +508,12 @@ public class QRCode {
    * 型番を設定
    */
   private void setupTypeNumber(boolean test) {
-
     int bits = QRUtil.getBCHTypeNumber(typeNumber);
-
     for (int i = 0; i < 18; i++) {
-      Boolean mod = Boolean.valueOf(!test && ( (bits >> i) & 1) == 1);
-      modules[i / 3][i % 3 + moduleCount - 8 - 3] = mod;
+      modules[i / 3][i % 3 + moduleCount - 8 - 3] = (!test && ( (bits >> i) & 1) == 1);
     }
-
     for (int i = 0; i < 18; i++) {
-      Boolean mod = Boolean.valueOf(!test && ( (bits >> i) & 1) == 1);
-      modules[i % 3 + moduleCount - 8 - 3][i / 3] = mod;
+      modules[i % 3 + moduleCount - 8 - 3][i / 3] = (!test && ( (bits >> i) & 1) == 1);
     }
   }
 
@@ -534,9 +527,7 @@ public class QRCode {
 
     // 縦方向
     for (int i = 0; i < 15; i++) {
-
-      Boolean mod = Boolean.valueOf(!test && ( (bits >> i) & 1) == 1);
-
+      boolean mod = (!test && ( (bits >> i) & 1) == 1);
       if (i < 6) {
         modules[i][8] = mod;
       } else if (i < 8) {
@@ -548,9 +539,7 @@ public class QRCode {
 
     // 横方向
     for (int i = 0; i < 15; i++) {
-
-      Boolean mod = Boolean.valueOf(!test && ( (bits >> i) & 1) == 1);
-
+      boolean mod = (!test && ( (bits >> i) & 1) == 1);
       if (i < 8) {
         modules[8][moduleCount - i - 1] = mod;
       } else if (i < 9) {
@@ -561,7 +550,7 @@ public class QRCode {
     }
 
     // 固定
-    modules[moduleCount - 8][8] = Boolean.valueOf(!test);
+    modules[moduleCount - 8][8] = (!test);
   }
 
   /**
@@ -579,8 +568,8 @@ public class QRCode {
 
     for (int y = 0; y < imageSize; y++) {
       for (int x = 0; x < imageSize; x++) {
-        if (margin <= x && x < imageSize - margin
-                && margin <= y && y < imageSize - margin) {
+        if ((margin <= x) && (x < imageSize - margin) &&
+            (margin <= y) && (y < imageSize - margin)) {
 
           int col = (x - margin) / cellSize;
           int row = (y - margin) / cellSize;

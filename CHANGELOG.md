@@ -1,5 +1,10 @@
 # QRCode for Java
 
+## 0.3.0 - 202
+
+1. Add QRCode utility
+2. Update Document
+
 ## 0.2.0 - 2023-12-04
 
 1. Delete web
@@ -7,6 +12,7 @@
 3. Reformat and Optimize code
 4. Add module
 5. Add Copyright
+6. Update Document
 
 ## 0.1.0 - 2023-11-28
 

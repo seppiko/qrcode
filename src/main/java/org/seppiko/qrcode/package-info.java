@@ -21,14 +21,6 @@
  */
 
 /**
- * Seppiko QRCode module.
- *
- * @author Kazuhiko Arase
- * @author Leonard Woo
+ * Seppiko QRCode with Utility
  */
-module seppiko.qrcode {
-  requires java.desktop;
-
-  exports com.d_project.qrcode;
-  exports org.seppiko.qrcode;
-}
+package org.seppiko.qrcode;

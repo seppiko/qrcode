@@ -1,6 +1,6 @@
 # QRCode for Java
 
-QRCode Generator impl
+QRCode Generator implementation.
 
 ## Demo
 
@@ -10,7 +10,7 @@ See [QRCodeServlet.java](https://github.com/kazuhikoarase/qrcode-generator/blob/
 
 Copyright (c) 2009 [Kazuhiko Arase](https://kazuhikoarase.github.io/)
 
-Copyright (c) 2023 Leonard Woo
+Copyright 2023 Leonard Woo
 
 Licensed under the [MIT license](http://www.opensource.org/licenses/mit)
 
