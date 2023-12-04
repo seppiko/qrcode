@@ -20,38 +20,14 @@
  * SOFTWARE.
  */
 
-package com.d_project.qrcode;
-
-import java.io.UnsupportedEncodingException;
-
 /**
- * QR8BitByte
+ * Seppiko QRCode module.
  *
  * @author Kazuhiko Arase
  * @author Leonard Woo
  */
-class QR8BitByte extends QRData {
+module seppiko.qrcode {
+  requires java.desktop;
 
-  public QR8BitByte(String data) {
-    super(Mode.MODE_8BIT_BYTE, data);
-  }
-
-  public void write(BitBuffer buffer) {
-    try {
-      byte[] data = getData().getBytes(QRCode.get8BitByteEncoding());
-      for (byte datum: data) {
-        buffer.put(datum, 8);
-      }
-    } catch (UnsupportedEncodingException e) {
-      throw new RuntimeException(e.getMessage());
-    }
-  }
-
-  public int getLength() {
-    try {
-      return getData().getBytes(QRCode.get8BitByteEncoding()).length;
-    } catch (UnsupportedEncodingException e) {
-      throw new RuntimeException(e.getMessage());
-    }
-  }
+  exports com.d_project.qrcode;
 }

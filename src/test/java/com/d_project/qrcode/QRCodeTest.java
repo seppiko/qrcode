@@ -1,7 +1,7 @@
 package com.d_project.qrcode;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Assertions;
 
 public class QRCodeTest {
 
@@ -38,9 +38,9 @@ public class QRCodeTest {
   }
 
   protected void assertEquals(byte[] expected, byte[] actual) {
-    Assert.assertEquals(expected.length, actual.length);
+    Assertions.assertEquals(expected.length, actual.length);
     for (int i = 0; i < expected.length; i++) {
-      Assert.assertEquals(expected[i], actual[i]);
+      Assertions.assertEquals(expected[i], actual[i]);
     }
   }
 }

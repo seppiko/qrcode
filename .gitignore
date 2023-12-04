@@ -1,7 +1,15 @@
-/.gradle
-/.settings
-/.classpath
-/.project
-/bin
-/build
-/gradle.properties
+# Created by .ignore support plugin (hsz.mobi)
+### Java template
+# Compiled class file
+*.class
+
+# Log file
+*.log
+log/
+logs/
+
+# Package Files #
+*.jar
+*.war
+
+target/
