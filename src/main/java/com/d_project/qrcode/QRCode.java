@@ -1,3 +1,25 @@
+/*
+ * Copyright 2023 the original author or authors.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 package com.d_project.qrcode;
 
 import java.awt.image.BufferedImage;
@@ -154,6 +176,7 @@ public class QRCode {
    *
    * @param data データ
    * @param errorCorrectionLevel 誤り訂正レベル
+   * @return QRCode instance.
    */
   public static QRCode getMinimumQRCode(String data, int errorCorrectionLevel) {
     int mode = QRUtil.getMode(data);
@@ -177,14 +200,18 @@ public class QRCode {
   }
 
   /**
+   * Get 8Bit encoding
    *
+   * @return Encoding name.
    */
   protected static String get8BitByteEncoding() {
     return _8BitByteEncoding;
   }
 
   /**
+   * Set 8Bit encoding
    *
+   * @param _8BitByteEncoding Encoding name.
    */
   protected static void set8BitByteEncoding(final String _8BitByteEncoding) {
     QRCode._8BitByteEncoding = _8BitByteEncoding;
@@ -266,17 +293,30 @@ public class QRCode {
     qrDataList.clear();
   }
 
-  /** Add qrdata */
+  /**
+   * Add QRData .
+   *
+   * @param qrData QRData instance.
+   */
   protected void addData(QRData qrData) {
     qrDataList.add(qrData);
   }
 
-  /** Add qrdata list conunt */
+  /**
+   * Add QRData list count.
+   *
+   * @return QRData list count.
+   */
   protected int getDataCount() {
     return qrDataList.size();
   }
 
-  /** get qrdata with index */
+  /**
+   * Get QRData with index
+   *
+   * @param index QRData list index.
+   * @return QRData instance.
+   */
   protected QRData getData(int index) {
     return qrDataList.get(index);
   }
@@ -286,6 +326,7 @@ public class QRCode {
    *
    * @param row 行 (0 ～ モジュール数 - 1)
    * @param col 列 (0 ～ モジュール数 - 1)
+   * @return true if this pixel is dark.
    */
   public boolean isDark(int row, int col) {
     if (modules[row][col] != null) {
@@ -297,6 +338,8 @@ public class QRCode {
 
   /**
    * モジュール数を取得する。
+   *
+   * @return module count.
    */
   public int getModuleCount() {
     return moduleCount;
@@ -306,7 +349,7 @@ public class QRCode {
    * QRコードを作成する。
    */
   public void make() {
-    make(false, getBestMaskPattern() );
+    make(false, getBestMaskPattern());
   }
 
   private int getBestMaskPattern() {
@@ -526,6 +569,8 @@ public class QRCode {
    *
    * @param cellSize セルのサイズ(pixel)
    * @param margin 余白(pixel)
+   * @return Image instance.
+   * @throws IOException if image write has exception.
    */
   public BufferedImage createImage(int cellSize, int margin) throws IOException {
     int imageSize = getModuleCount() * cellSize + margin * 2;

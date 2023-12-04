@@ -9,7 +9,7 @@
   <version>0.2.0</version>
 
   <name>QRCode for Java</name>
-  <description>QRCode for Java</description>
+  <description>QRCode Generator</description>
   <url>https://github.com/seppiko/qrcode</url>
 
   <organization>
