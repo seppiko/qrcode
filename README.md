@@ -1,5 +1,11 @@
 # QRCode for Java
 
+QRCode Generator impl
+
+## Demo
+
+See [QRCodeServlet.java](https://github.com/kazuhikoarase/qrcode-generator/blob/master/java/src/main/java/com/d_project/qrcode/web/QRCodeServlet.java)
+
 ## Copyright
 
 Copyright (c) 2009 [Kazuhiko Arase](https://kazuhikoarase.github.io/)
