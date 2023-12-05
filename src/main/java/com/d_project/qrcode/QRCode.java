@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * QRコード.
@@ -331,13 +332,13 @@ public class QRCode {
    * @return true if this pixel is dark.
    */
   public boolean isDark(int row, int col) {
-    return modules[row][col] != null? modules[row][col]: false;
+    return Optional.ofNullable(modules[row][col]).orElse(false);
   }
 
   /**
    * モジュール数を取得する。
    *
-   * @return module count.
+   * @return モジュール数
    */
   public int getModuleCount() {
     return moduleCount;
@@ -453,11 +454,8 @@ public class QRCode {
 
         for (int r = -2; r <= 2; r++) {
           for (int c = -2; c <= 2; c++) {
-            if (r == -2 || r == 2 || c == -2 || c == 2 || (r == 0 && c == 0)) {
-              modules[row + r][col + c] = Boolean.TRUE;
-            } else {
-              modules[row + r][col + c] = Boolean.FALSE;
-            }
+            modules[row + r][col + c] =
+                (r == -2 || r == 2 || c == -2 || c == 2 || (r == 0 && c == 0));
           }
         }
       }
@@ -470,20 +468,20 @@ public class QRCode {
   private void setupPositionProbePattern(int row, int col) {
     for (int r = -1; r <= 7; r++) {
       for (int c = -1; c <= 7; c++) {
-        if (row + r <= -1 || moduleCount <= row + r
-            || col + c <= -1 || moduleCount <= col + c) {
+        if ( setupProbe0(row + r) || setupProbe0(col + c) ) {
           continue;
         }
 
-        if ( (0 <= r && r <= 6 && (c == 0 || c == 6) )
-            || (0 <= c && c <= 6 && (r == 0 || r == 6) )
-            || (2 <= r && r <= 4 && 2 <= c && c <= 4) ) {
-          modules[row + r][col + c] = Boolean.TRUE;
-        } else {
-          modules[row + r][col + c] = Boolean.FALSE;
-        }
+        modules[row + r][col + c] =
+            ( (0 <= r && r <= 6 && (c == 0 || c == 6) ) ||
+                (0 <= c && c <= 6 && (r == 0 || r == 6) ) ||
+                (2 <= r && r <= 4 && 2 <= c && c <= 4) );
       }
     }
+  }
+
+  private boolean setupProbe0(int position) {
+    return (position <= -1) || (moduleCount <= position);
   }
 
   /**
@@ -521,7 +519,6 @@ public class QRCode {
    * 形式情報を設定
    */
   private void setupTypeInfo(boolean test, int maskPattern) {
-
     int data = (errorCorrectionLevel << 3) | maskPattern;
     int bits = QRUtil.getBCHTypeInfo(data);
 
@@ -551,41 +548,5 @@ public class QRCode {
 
     // 固定
     modules[moduleCount - 8][8] = (!test);
-  }
-
-  /**
-   * イメージを取得する。
-   *
-   * @param cellSize セルのサイズ(pixel)
-   * @param margin 余白(pixel)
-   * @return Image instance.
-   * @throws IOException if image write has exception.
-   */
-  public BufferedImage createImage(int cellSize, int margin) throws IOException {
-    int imageSize = getModuleCount() * cellSize + margin * 2;
-
-    BufferedImage image = new BufferedImage(imageSize, imageSize, BufferedImage.TYPE_INT_RGB);
-
-    for (int y = 0; y < imageSize; y++) {
-      for (int x = 0; x < imageSize; x++) {
-        if ((margin <= x) && (x < imageSize - margin) &&
-            (margin <= y) && (y < imageSize - margin)) {
-
-          int col = (x - margin) / cellSize;
-          int row = (y - margin) / cellSize;
-
-          if (isDark(row, col) ) {
-              image.setRGB(x, y, 0x000000);
-          } else {
-              image.setRGB(x, y, 0xffffff);
-          }
-
-        } else {
-          image.setRGB(x, y, 0xffffff);
-        }
-      }
-    }
-
-    return image;
   }
 }

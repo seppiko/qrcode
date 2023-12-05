@@ -186,35 +186,24 @@ public class GIFImage {
       String s = String.valueOf( (char)data[dataIndex++]);
 
       while (dataIndex < data.length) {
-
         char c = (char)data[dataIndex++];
-
         if (table.contains(s + c) ) {
-
           s = s + c;
-
         } else {
-
           bitOut.write(table.indexOf(s), bitLength);
-
           if (table.size() < 0xfff) {
-
             if (table.size() == (1 << bitLength) ) {
               bitLength++;
             }
-
             table.add(s + c);
           }
-
           s = String.valueOf(c);
         }
       }
-
       bitOut.write(table.indexOf(s), bitLength);
 
       // end code
       bitOut.write(endCode, bitLength);
-
     } finally {
       bitOut.close();
     }
@@ -223,7 +212,6 @@ public class GIFImage {
   }
 
   private static class LZWTable {
-
     private final Map<String, Integer> map;
 
     public LZWTable() {

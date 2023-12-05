@@ -28,18 +28,68 @@ import com.d_project.qrcode.QRCode;
 import java.awt.image.BufferedImage;
 
 /**
- * QR Code utility
+ * QRCode utility
  *
  * @author Leonard Woo
  */
 public class QRCodeUtil {
 
-  public static String createText(QRCode qrCode, String newline) {
+  private final QRCode qrcode;
+
+  /**
+   * constructor
+   *
+   * @param qrcode {@link QRCode} instance.
+   */
+  private QRCodeUtil(QRCode qrcode) {
+    this.qrcode = qrcode;
+  }
+
+  /**
+   * Get QRCode
+   *
+   * @param text data
+   * @param typeNumber type
+   * @param errorCorrectionLevel error correction level, see {@link ErrorCorrectionLevel}
+   * @return this instance
+   */
+  public static QRCodeUtil getQRCode(String text, int typeNumber, int errorCorrectionLevel) {
+    return new QRCodeUtil(getQRCode0(text, typeNumber, errorCorrectionLevel));
+  }
+
+  /**
+   * Get QRCode
+   *
+   * @param text data
+   * @param typeNumber type
+   * @param errorCorrectionLevel error correction level string, L M Q and H
+   * @return this instance
+   */
+  public static QRCodeUtil getQRCode(String text, int typeNumber, String errorCorrectionLevel) {
+    return new QRCodeUtil(getQRCode0(text, typeNumber, errorCorrectionLevel));
+  }
+
+  /**
+   * Create QRCode text with CRLF
+   *
+   * @return QRCode text
+   */
+  public String createText() {
+    return createText("\r\n");
+  }
+
+  /**
+   * Create QRCode text
+   *
+   * @param newline Newline
+   * @return QRCode text
+   */
+  public String createText(String newline) {
     StringBuilder sb = new StringBuilder();
-    int moduleCount = qrCode.getModuleCount();
+    int moduleCount = qrcode.getModuleCount();
     for (int row = 0; row < moduleCount; row++) {
       for (int col = 0; col < moduleCount; col++) {
-        sb.append(qrCode.isDark(row, col)? "1" : "0");
+        sb.append(qrcode.isDark(row, col)? "1" : "0");
       }
       sb.append(newline);
     }
@@ -47,10 +97,18 @@ public class QRCodeUtil {
     return sb.toString();
   }
 
-  public static BufferedImage createImage(QRCode qrCode, int cellSize, int margin,
-      int color, int backgroundColor) {
+  /**
+   * Create image
+   *
+   * @param cellSize cell size pixel
+   * @param margin margin pixel
+   * @param color QRCode color
+   * @param backgroundColor image background color
+   * @return {@link BufferedImage} instance
+   */
+  public BufferedImage createImage(int cellSize, int margin, int color, int backgroundColor) {
     checkImage(cellSize, margin);
-    int imageSize = qrCode.getModuleCount() * cellSize + margin * 2;
+    int imageSize = qrcode.getModuleCount() * cellSize + margin * 2;
     BufferedImage image = new BufferedImage(imageSize, imageSize, BufferedImage.TYPE_INT_ARGB);
 
     for (int y = 0; y < imageSize; y++) {
@@ -61,7 +119,7 @@ public class QRCodeUtil {
           int col = (x - margin) / cellSize;
           int row = (y - margin) / cellSize;
 
-          if (qrCode.isDark(row, col)) {
+          if (qrcode.isDark(row, col)) {
             image.setRGB(x, y, color);
           } else {
             image.setRGB(x, y, backgroundColor);
@@ -76,10 +134,17 @@ public class QRCodeUtil {
     return image;
   }
 
-  public static GIFImage createGIFImage(QRCode qrCode, int cellSize, int margin) {
+  /**
+   * Create gif image (B/W)
+   *
+   * @param cellSize cell size pixel
+   * @param margin margin pixel
+   * @return {@link GIFImage} instance
+   */
+  public GIFImage createGIFImage(int cellSize, int margin) {
     checkImage(cellSize, margin);
 
-    int imageSize = qrCode.getModuleCount() * cellSize + margin * 2;
+    int imageSize = qrcode.getModuleCount() * cellSize + margin * 2;
     GIFImage image = new GIFImage(imageSize, imageSize);
 
     for (int y = 0; y < imageSize; y++) {
@@ -90,7 +155,7 @@ public class QRCodeUtil {
           int col = (x - margin) / cellSize;
           int row = (y - margin) / cellSize;
 
-          if (qrCode.isDark(row, col)) {
+          if (qrcode.isDark(row, col)) {
             image.setPixel(x, y, 0);
           } else {
             image.setPixel(x, y, 1);
@@ -114,12 +179,12 @@ public class QRCodeUtil {
     }
   }
 
-  public static QRCode getQRCode(String text, int typeNumber, String ecl)
+  private static QRCode getQRCode0(String text, int typeNumber, String ecl)
       throws IllegalArgumentException {
-    return getQRCode(text, typeNumber, ErrorCorrectionLevel.parser(ecl));
+    return getQRCode0(text, typeNumber, ErrorCorrectionLevel.parser(ecl));
   }
 
-  public static QRCode getQRCode(String text, int typeNumber, int errorCorrectionLevel)
+  private static QRCode getQRCode0(String text, int typeNumber, int errorCorrectionLevel)
       throws IllegalArgumentException {
     checkTypeNumber(typeNumber);
 
