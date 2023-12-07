@@ -22,8 +22,6 @@
 
 package com.d_project.qrcode;
 
-import java.io.UnsupportedEncodingException;
-
 /**
  * QR8BitByte
  *
@@ -37,21 +35,13 @@ class QR8BitByte extends QRData {
   }
 
   public void write(BitBuffer buffer) {
-    try {
-      byte[] data = getData().getBytes(QRCode.get8BitByteEncoding());
-      for (byte datum: data) {
-        buffer.put(datum, 8);
-      }
-    } catch (UnsupportedEncodingException e) {
-      throw new RuntimeException(e.getMessage());
+    byte[] data = getData().getBytes(QRCode.get8BitByteEncoding());
+    for (byte datum: data) {
+      buffer.put(datum, 8);
     }
   }
 
   public int getLength() {
-    try {
-      return getData().getBytes(QRCode.get8BitByteEncoding()).length;
-    } catch (UnsupportedEncodingException e) {
-      throw new RuntimeException(e.getMessage());
-    }
+    return getData().getBytes(QRCode.get8BitByteEncoding()).length;
   }
 }

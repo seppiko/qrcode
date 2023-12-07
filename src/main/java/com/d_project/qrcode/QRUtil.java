@@ -22,7 +22,7 @@
 
 package com.d_project.qrcode;
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 
 /**
  * QRUtil
@@ -80,24 +80,24 @@ class QRUtil {
       (1 << 12) | (1 << 11) | (1 << 10) | (1 << 9) | (1 << 8) | (1 << 5) | (1 << 2) | (1 << 0);
   private static final int G15_MASK =
       (1 << 14) | (1 << 12) | (1 << 10) | (1 << 4) | (1 << 1);
-    private static final int[][][] MAX_LENGTH = {
-        { {41,  25,  17,  10},  {34,  20,  14,  8},   {27,  16,  11,  7},  {17,  10,  7,   4} },
-        { {77,  47,  32,  20},  {63,  38,  26,  16},  {48,  29,  20,  12}, {34,  20,  14,  8} },
-        { {127, 77,  53,  32},  {101, 61,  42,  26},  {77,  47,  32,  20}, {58,  35,  24,  15} },
-        { {187, 114, 78,  48},  {149, 90,  62,  38},  {111, 67,  46,  28}, {82,  50,  34,  21} },
-        { {255, 154, 106, 65},  {202, 122, 84,  52},  {144, 87,  60,  37}, {106, 64,  44,  27} },
-        { {322, 195, 134, 82},  {255, 154, 106, 65},  {178, 108, 74,  45}, {139, 84,  58,  36} },
-        { {370, 224, 154, 95},  {293, 178, 122, 75},  {207, 125, 86,  53}, {154, 93,  64,  39} },
-        { {461, 279, 192, 118}, {365, 221, 152, 93},  {259, 157, 108, 66}, {202, 122, 84,  52} },
-        { {552, 335, 230, 141}, {432, 262, 180, 111}, {312, 189, 130, 80}, {235, 143, 98,  60} },
-        { {652, 395, 271, 167}, {513, 311, 213, 131}, {364, 221, 151, 93}, {288, 174, 119, 74} }
-    };
+  private static final int[][][] MAX_LENGTH = {
+      { {41,  25,  17,  10},  {34,  20,  14,  8},   {27,  16,  11,  7},  {17,  10,  7,   4} },
+      { {77,  47,  32,  20},  {63,  38,  26,  16},  {48,  29,  20,  12}, {34,  20,  14,  8} },
+      { {127, 77,  53,  32},  {101, 61,  42,  26},  {77,  47,  32,  20}, {58,  35,  24,  15} },
+      { {187, 114, 78,  48},  {149, 90,  62,  38},  {111, 67,  46,  28}, {82,  50,  34,  21} },
+      { {255, 154, 106, 65},  {202, 122, 84,  52},  {144, 87,  60,  37}, {106, 64,  44,  27} },
+      { {322, 195, 134, 82},  {255, 154, 106, 65},  {178, 108, 74,  45}, {139, 84,  58,  36} },
+      { {370, 224, 154, 95},  {293, 178, 122, 75},  {207, 125, 86,  53}, {154, 93,  64,  39} },
+      { {461, 279, 192, 118}, {365, 221, 152, 93},  {259, 157, 108, 66}, {202, 122, 84,  52} },
+      { {552, 335, 230, 141}, {432, 262, 180, 111}, {312, 189, 130, 80}, {235, 143, 98,  60} },
+      { {652, 395, 271, 167}, {513, 311, 213, 131}, {364, 221, 151, 93}, {288, 174, 119, 74} }
+  };
 
   private QRUtil() {
   }
 
-  public static String getJISEncoding() {
-    return "SJIS";
+  public static Charset getJISEncoding() {
+    return Charset.forName("SJIS");
   }
 
   public static int[] getPatternPosition(int typeNumber) {
@@ -152,7 +152,7 @@ class QRUtil {
       case MaskPattern.PATTERN101 -> (i * j) % 2 + (i * j) % 3 == 0;
       case MaskPattern.PATTERN110 -> ((i * j) % 2 + (i * j) % 3) % 2 == 0;
       case MaskPattern.PATTERN111 -> ((i * j) % 3 + (i + j) % 2) % 2 == 0;
-      default -> throw new IllegalArgumentException("mask:" + maskPattern);
+      default -> throw new IllegalArgumentException("mask: " + maskPattern);
     };
   }
 
@@ -268,7 +268,7 @@ class QRUtil {
   private static boolean isNumber(String s) {
     for (int i = 0; i < s.length(); i++) {
       char c = s.charAt(i);
-      if (!('0' <= c && c <= '9') ) {
+      if (!between(c, '0', '9') ) {
         return false;
       }
     }
@@ -276,10 +276,8 @@ class QRUtil {
   }
 
   private static boolean isAlphaNum(String s) {
-    for (int i = 0; i < s.length(); i++) {
-      char c = s.charAt(i);
-      if (!('0' <= c && c <= '9') && !('A' <= c && c <= 'Z') &&
-          (" $%*+-./:".indexOf(c) == -1)) {
+    for (char c: s.toCharArray()) {
+      if (c > 0x7F || QRAlphaNum.TABLE[c] < 0) {
         return false;
       }
     }
@@ -287,21 +285,21 @@ class QRUtil {
   }
 
   private static boolean isKanji(String s) {
-    try {
-      byte[] data = s.getBytes(QRUtil.getJISEncoding() );
-      int i = 0;
-      while (i + 1 < data.length) {
-        int c = ( (0xff & data[i]) << 8) | (0xff & data[i + 1]);
-        if (!(0x8140 <= c && c <= 0x9FFC) && !(0xE040 <= c && c <= 0xEBBF) ) {
-          return false;
-        }
-        i += 2;
+    byte[] data = s.getBytes(getJISEncoding());
+    int i = 0;
+    while (i + 1 < data.length) {
+      int c = ( (0xFF & data[i]) << 8) | (0xFF & data[i + 1]);
+      if (!between(c, 0x8140, 0x9FFC) && !between(c, 0xE040, 0xEBBF) ) {
+        return false;
       }
-
-      return i >= data.length;
-    } catch(UnsupportedEncodingException e) {
-      throw new RuntimeException(e.getMessage() );
+      i += 2;
     }
+
+    return i >= data.length;
+  }
+
+  public static boolean between(int num, int min, int max) {
+    return (min <= num) && (num <= max);
   }
 
   public static int getBCHTypeInfo(int data) {

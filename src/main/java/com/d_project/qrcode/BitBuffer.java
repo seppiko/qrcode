@@ -51,7 +51,7 @@ class BitBuffer {
   public String toString() {
     StringBuilder buffer = new StringBuilder();
     for (int i = 0; i < getLengthInBits(); i++) {
-      buffer.append(get(i) ? '1' : '0');
+      buffer.append(get(i)? '1': '0');
     }
     return buffer.toString();
   }

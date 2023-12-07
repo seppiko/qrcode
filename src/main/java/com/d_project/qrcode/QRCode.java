@@ -22,12 +22,10 @@
 
 package com.d_project.qrcode;
 
-import java.awt.image.BufferedImage;
-import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.UnsupportedCharsetException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -46,7 +44,7 @@ public class QRCode {
   private static final int PAD0 = 0xEC;
   private static final int PAD1 = 0x11;
 
-  private static String _8BitByteEncoding = QRUtil.getJISEncoding();
+  private static Charset _8BitByteEncoding = QRUtil.getJISEncoding();
   private int typeNumber;
   private Boolean[][] modules;
   private int moduleCount;
@@ -205,10 +203,10 @@ public class QRCode {
   /**
    * Get 8Bit encoding
    *
-   * @return Encoding name.
+   * @return Encoding.
    */
-  protected static String get8BitByteEncoding() {
-    return _8BitByteEncoding;
+  protected static Charset get8BitByteEncoding() {
+    return QRCode._8BitByteEncoding;
   }
 
   /**
@@ -217,7 +215,11 @@ public class QRCode {
    * @param _8BitByteEncoding Encoding name.
    */
   protected static void set8BitByteEncoding(final String _8BitByteEncoding) {
-    QRCode._8BitByteEncoding = _8BitByteEncoding;
+    try {
+      QRCode._8BitByteEncoding = Charset.forName(_8BitByteEncoding);
+    } catch (UnsupportedCharsetException ex) {
+      throw new RuntimeException(ex.getMessage());
+    }
   }
 
   /**

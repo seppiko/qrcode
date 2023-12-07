@@ -43,7 +43,7 @@ public interface ErrorCorrectionLevel {
   int H = 2;
 
   /**
-   * Parser Error Correction Level.
+   * Parser Error Correction Level String.
    *
    * @param ecl Error Correction Level String.
    * @return Error Correction Level Number.

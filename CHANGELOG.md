@@ -4,6 +4,7 @@
 
 1. Add QRCode utility
 2. Update Document
+3. Optimize code
 
 ## 0.2.0 - 2023-12-04
 

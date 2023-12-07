@@ -42,10 +42,10 @@ class QRNumber extends QRData {
   }
 
   private static int parseInt(char c) {
-    if ('0' <= c && c <= '9') {
+    if (QRUtil.between(c, '0', '9')) {
       return c - '0';
     }
-    throw new IllegalArgumentException("illegal char :" + c);
+    throw new IllegalArgumentException("Illegal char: " + c);
   }
 
   public void write(BitBuffer buffer) {

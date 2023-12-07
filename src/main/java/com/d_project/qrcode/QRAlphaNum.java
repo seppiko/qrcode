@@ -34,25 +34,26 @@ class QRAlphaNum extends QRData {
     super(Mode.MODE_ALPHA_NUM, data);
   }
 
+  static final int[] TABLE = {
+   //  0   1   2   3   4   5   6   7   8   9   A   B   C   D   E   F
+      -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, // 00-0f
+      -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, // 10-1f
+      36, -1, -1, -1, 37, 38, -1, -1, -1, -1, 39, 40, -1, 41, 42, 43, // 20-2f
+       0,  1,  2,  3,  4,  5,  6,  7, 8,  9,  44, -1, -1, -1, -1, -1, // 30-3f 0-9
+      -1, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, // 40-4f A-O
+      25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35,                     // 50-5a P-Z
+                                                  -1, -1, -1, -1, -1, // 5b-5f
+      -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, // 60-6f a-o
+      -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,                     // 70-7a p-z
+                                                  -1, -1, -1, -1, -1, // 7b-7f
+  };
+
   private static int getCode(char c) {
-    if ('0' <= c && c <= '9') {
-      return c - '0';
-    } else if ('A' <= c && c <= 'Z') {
-      return c - 'A' + 10;
-    } else {
-      return switch (c) {
-        case ' ' -> 36;
-        case '$' -> 37;
-        case '%' -> 38;
-        case '*' -> 39;
-        case '+' -> 40;
-        case '-' -> 41;
-        case '.' -> 42;
-        case '/' -> 43;
-        case ':' -> 44;
-        default -> throw new IllegalArgumentException("illegal char :" + c);
-      };
+    int code = TABLE[c];
+    if (code > -1) {
+      return code;
     }
+    throw new IllegalArgumentException("Illegal char: " + c);
   }
 
   public void write(BitBuffer buffer) {
