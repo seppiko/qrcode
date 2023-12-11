@@ -22,13 +22,15 @@
 
 package com.d_project.qrcode;
 
+import java.io.Serializable;
+
 /**
  * 誤り訂正レベル.
  *
  * @author Kazuhiko Arase
  * @author Leonard Woo
  */
-public interface ErrorCorrectionLevel {
+public interface ErrorCorrectionLevel extends Serializable {
 
   /** 復元能力 7%. */
   int L = 1;

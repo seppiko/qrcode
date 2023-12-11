@@ -22,13 +22,15 @@
 
 package com.d_project.qrcode;
 
+import java.io.Serializable;
+
 /**
  * QRData
  *
  * @author Kazuhiko Arase
  * @author Leonard Woo
  */
-abstract class QRData {
+abstract class QRData implements Serializable {
 
   private final int mode;
   private final String data;

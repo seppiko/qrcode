@@ -22,6 +22,7 @@
 
 package com.d_project.qrcode;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +32,7 @@ import java.util.List;
  * @author Kazuhiko Arase
  * ErrorCorrectionLevel
  */
-class RSBlock {
+class RSBlock implements Serializable {
 
   private static final int[][] RS_BLOCK_TABLE = {
     // L

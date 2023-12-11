@@ -22,6 +22,7 @@
 
 package com.d_project.qrcode;
 
+import java.io.Serializable;
 import java.nio.charset.Charset;
 
 /**
@@ -30,7 +31,7 @@ import java.nio.charset.Charset;
  * @author Kazuhiko Arase
  * @author Leonard Woo
  */
-class QRUtil {
+class QRUtil implements Serializable {
 
   private static final int[][] PATTERN_POSITION_TABLE ={
     {},

@@ -34,6 +34,7 @@ class QRAlphaNum extends QRData {
     super(Mode.MODE_ALPHA_NUM, data);
   }
 
+  // [0-9A-Z $%*+-./:]
   static final int[] TABLE = {
    //  0   1   2   3   4   5   6   7   8   9   A   B   C   D   E   F
       -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, // 00-0f

@@ -1,0 +1,61 @@
+= QRCode for Java
+
+:mcb: https://img.shields.io/maven-central/v/org.seppiko/qrcode?style=flat-square
+:mcbl: https://search.maven.org/artifact/org.seppiko/qrcode
+:jdoc: https://javadoc.io/badge2/org.seppiko/qrcode/javadoc.svg?style=flat-square
+:jdocl: https://javadoc.io/doc/org.seppiko/qrcode
+:ghl: https://img.shields.io/github/license/seppiko/qrcode?style=flat-square
+:ghli: https://github.com/seppiko/qrcode/blob/main/LICENSE
+
+image:{mcb}["Maven Central", link={mcbl}]
+image:{jdoc}["javadoc", link={jdocl}]
+image:{ghl}["MIT License", link={ghli}]
+
+QRCode Generator implementation with utility.
+
+== Maven central
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.seppiko</groupId>
+  <artifactId>qrcode</artifactId>
+  <version>${seppiko-qrcode.version}</version>
+</dependency>
+----
+
+== Demo
+
+[source,java]
+----
+import org.seppiko.qrcode.QRCodeUtil;
+
+public class Demo {
+
+  public static void main(String[] args){
+    String text = "0123漢字ABC";
+    String qrcodeText = QRCodeUtil.getQRCode(text, 1, "l").createText();
+    System.out.println(qrcodeText);
+  }
+}
+----
+
+== Copyright
+
+:d_project: https://kazuhikoarase.github.io/
+:license: http://www.opensource.org/licenses/mit
+:dwi: http://www.denso-wave.com/qrcode/faqpatent-e.html
+
+Copyright (c) 2009 {d_project}[Kazuhiko Arase]
+
+Copyright 2023 Leonard Woo
+
+Licensed under the {license}[MIT license]
+
+The word "QR Code" is registered trademark of {dwi}[DENSO WAVE INCORPORATED]
+
+== Sponsors
+
+++++
+<a href="https://www.jetbrains.com/" target="_blank"><img src="https://seppiko.org/images/jetbrains.png" alt="JetBrians" width="100px"></a>
+++++

@@ -22,12 +22,14 @@
 
 package com.d_project.qrcode;
 
+import java.io.Serializable;
+
 /**
  * モード.
  *
  * @author Kazuhiko Arase
  */
-public interface Mode {
+public interface Mode extends Serializable {
 
   /** 数値モード */
   int MODE_NUMBER = 1 << 0;

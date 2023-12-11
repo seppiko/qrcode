@@ -1,0 +1,21 @@
+= QRCode for Java
+
+== 0.3.0 - 202
+
+. Add QRCode utility
+. Update Document
+. Optimize code
+. Change markdown to asciidoc
+
+== 0.2.0 - 2023-12-04
+
+. Delete web
+. Change `build.gradle` to `pom.xml`
+. Reformat and Optimize code
+. Add module
+. Add Copyright
+. Update Document
+
+== 0.1.0 - 2023-11-28
+
+. Fork [kazuhikoarase/qrcode-generator](https://github.com/kazuhikoarase/qrcode-generator)

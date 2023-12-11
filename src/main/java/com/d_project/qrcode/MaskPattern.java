@@ -22,12 +22,14 @@
 
 package com.d_project.qrcode;
 
+import java.io.Serializable;
+
 /**
  * マスクパターン.
  *
  * @author Kazuhiko Arase
  */
-interface MaskPattern {
+interface MaskPattern extends Serializable {
 
   /** マスクパターン000 */
   int PATTERN000 = 0;

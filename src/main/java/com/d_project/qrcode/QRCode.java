@@ -22,6 +22,7 @@
 
 package com.d_project.qrcode;
 
+import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.ArrayList;
@@ -39,7 +40,7 @@ import java.util.Optional;
  * @author Kazuhiko Arase
  * @author Leonard Woo
  */
-public class QRCode {
+public class QRCode implements Serializable {
 
   private static final int PAD0 = 0xEC;
   private static final int PAD1 = 0x11;
