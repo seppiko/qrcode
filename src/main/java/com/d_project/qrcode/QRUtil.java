@@ -81,7 +81,10 @@ class QRUtil implements Serializable {
       (1 << 12) | (1 << 11) | (1 << 10) | (1 << 9) | (1 << 8) | (1 << 5) | (1 << 2) | (1 << 0);
   private static final int G15_MASK =
       (1 << 14) | (1 << 12) | (1 << 10) | (1 << 4) | (1 << 1);
+
+  // https://www.qrcode.com/en/about/version.html
   private static final int[][][] MAX_LENGTH = {
+      // {L(Number, Alphanumeric, Binary, Kanji), M, Q, H}
       { {41,  25,  17,  10},  {34,  20,  14,  8},   {27,  16,  11,  7},  {17,  10,  7,   4} },
       { {77,  47,  32,  20},  {63,  38,  26,  16},  {48,  29,  20,  12}, {34,  20,  14,  8} },
       { {127, 77,  53,  32},  {101, 61,  42,  26},  {77,  47,  32,  20}, {58,  35,  24,  15} },
@@ -126,6 +129,8 @@ class QRUtil implements Serializable {
 
     return MAX_LENGTH[t][e][m];
   }
+
+  
 
   /**
    * エラー訂正多項式を取得する。

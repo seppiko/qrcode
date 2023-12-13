@@ -42,8 +42,8 @@ import java.util.Optional;
  */
 public class QRCode implements Serializable {
 
-  private static final int PAD0 = 0xEC;
-  private static final int PAD1 = 0x11;
+  static final int PAD0 = 0xEC;
+  static final int PAD1 = 0x11;
 
   private static Charset _8BitByteEncoding = QRUtil.getJISEncoding();
   private int typeNumber;
@@ -300,7 +300,7 @@ public class QRCode implements Serializable {
   }
 
   /**
-   * Add QRData .
+   * Add QRData.
    *
    * @param qrData QRData instance.
    */

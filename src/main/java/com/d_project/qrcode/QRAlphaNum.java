@@ -35,6 +35,7 @@ class QRAlphaNum extends QRData {
   }
 
   // [0-9A-Z $%*+-./:]
+  // The original table is defined in the table 5 of JISX0510:2004 (p.19).
   static final int[] TABLE = {
    //  0   1   2   3   4   5   6   7   8   9   A   B   C   D   E   F
       -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, // 00-0f
@@ -50,9 +51,11 @@ class QRAlphaNum extends QRData {
   };
 
   private static int getCode(char c) {
-    int code = TABLE[c];
-    if (code > -1) {
-      return code;
+    if (c < TABLE.length) {
+      int code = TABLE[c];
+      if (code > -1) {
+        return code;
+      }
     }
     throw new IllegalArgumentException("Illegal char: " + c);
   }

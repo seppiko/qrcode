@@ -58,6 +58,7 @@ abstract class QRData implements Serializable {
    * @param type 型番
    * @return ビット長
    */
+  // ISO 18004:2015 7.4.1 Table 3
   public int getLengthInBits(int type) {
     if (1 <= type && type < 10) {
       // 1 - 9
