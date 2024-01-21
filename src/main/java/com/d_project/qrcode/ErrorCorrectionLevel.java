@@ -33,15 +33,19 @@ import java.io.Serializable;
 public interface ErrorCorrectionLevel extends Serializable {
 
   /** 復元能力 7%. */
+  // Low
   int L = 1;
 
   /** 復元能力 15%. */
+  // Medium
   int M = 0;
 
   /** 復元能力 25%. */
+  // Quality
   int Q = 3;
 
   /** 復元能力 30%. */
+  // High
   int H = 2;
 
   /**

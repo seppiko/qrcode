@@ -30,12 +30,15 @@ import java.util.List;
  * RSBlock
  *
  * @author Kazuhiko Arase
- * ErrorCorrectionLevel
+ * @author Leonard Woo
  */
 class RSBlock implements Serializable {
 
+  // Error Correction Block
+  // Error Correction codes per block (c, k, r)
+  // ISO 18004:2015 7.5.1 Table 9
   private static final int[][] RS_BLOCK_TABLE = {
-    // L
+    // L{Num Of ECBs, ECEvery c, ECEvery k, ...}
     // M
     // Q
     // H
@@ -290,7 +293,6 @@ class RSBlock implements Serializable {
   }
 
   public static RSBlock[] getRSBlocks(int typeNumber, int errorCorrectionLevel) {
-
     int[] rsBlock = getRsBlockTable(typeNumber, errorCorrectionLevel);
     int length = rsBlock.length / 3;
 

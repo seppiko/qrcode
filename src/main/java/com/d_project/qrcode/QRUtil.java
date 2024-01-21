@@ -33,6 +33,7 @@ import java.nio.charset.Charset;
  */
 class QRUtil implements Serializable {
 
+  // ISO 18004:2015 Table E.1
   private static final int[][] PATTERN_POSITION_TABLE ={
     {},
     {6, 18},
@@ -75,6 +76,7 @@ class QRUtil implements Serializable {
     {6, 26, 54, 82, 110, 138, 166},
     {6, 30, 58, 86, 114, 142, 170}
   };
+
   private static final int G15 =
       (1 << 10) | (1 << 8) | (1 << 5) | (1 << 4) | (1 << 2) | (1 << 1) | (1 << 0);
   private static final int G18 =
@@ -83,6 +85,7 @@ class QRUtil implements Serializable {
       (1 << 14) | (1 << 12) | (1 << 10) | (1 << 4) | (1 << 1);
 
   // https://www.qrcode.com/en/about/version.html
+  // ISO 18004:2015 7.4.10 Table 7
   private static final int[][][] MAX_LENGTH = {
       // {L(Number, Alphanumeric, Binary, Kanji), M, Q, H}
       { {41,  25,  17,  10},  {34,  20,  14,  8},   {27,  16,  11,  7},  {17,  10,  7,   4} },
@@ -148,6 +151,7 @@ class QRUtil implements Serializable {
   /**
    * 指定されたパターンのマスクを取得する。
    */
+  // ISO 18004:2015 7.8.2 Table 10
   public static boolean getMask(int maskPattern, int i, int j) {
     return switch (maskPattern) {
       case MaskPattern.PATTERN000 -> (i + j) % 2 == 0;
@@ -155,7 +159,7 @@ class QRUtil implements Serializable {
       case MaskPattern.PATTERN010 -> j % 3 == 0;
       case MaskPattern.PATTERN011 -> (i + j) % 3 == 0;
       case MaskPattern.PATTERN100 -> (i / 2 + j / 3) % 2 == 0;
-      case MaskPattern.PATTERN101 -> (i * j) % 2 + (i * j) % 3 == 0;
+      case MaskPattern.PATTERN101 -> ((i * j) % 2 + (i * j) % 3) == 0;
       case MaskPattern.PATTERN110 -> ((i * j) % 2 + (i * j) % 3) % 2 == 0;
       case MaskPattern.PATTERN111 -> ((i * j) % 3 + (i + j) % 2) % 2 == 0;
       default -> throw new IllegalArgumentException("mask: " + maskPattern);
@@ -307,6 +311,8 @@ class QRUtil implements Serializable {
   public static boolean between(int num, int min, int max) {
     return (min <= num) && (num <= max);
   }
+
+  // BCH codes (https://en.wikipedia.org/wiki/BCH_code)
 
   public static int getBCHTypeInfo(int data) {
     int d = data << 10;

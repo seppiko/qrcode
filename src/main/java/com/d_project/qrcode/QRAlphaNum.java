@@ -35,7 +35,7 @@ class QRAlphaNum extends QRData {
   }
 
   // [0-9A-Z $%*+-./:]
-  // The original table is defined in the table 5 of JISX0510:2004 (p.19).
+  // ISO 18004:2015 7.4.4 Table 5
   static final int[] TABLE = {
    //  0   1   2   3   4   5   6   7   8   9   A   B   C   D   E   F
       -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, // 00-0f

@@ -81,11 +81,9 @@ public class QRCode implements Serializable {
     }
 
     if (buffer.getLengthInBits() > totalDataCount * 8) {
-      throw new IllegalArgumentException("code length overflow. ("
-        + buffer.getLengthInBits()
-        + ">"
-        +  totalDataCount * 8
-        + ")");
+      throw new IllegalArgumentException(
+          "code length overflow. (" + buffer.getLengthInBits() +
+              ">" +  (totalDataCount * 8) + ")");
     }
 
     // 終端コード
